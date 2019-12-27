@@ -38,7 +38,9 @@ jobs:
   include:
     - stage: test
       name: akka-typed-starter Main
-      script: cd $TRAVIS_BUILD_DIR/akka-typed-starter && ./sbtw "runMain com.github.daggerok.akka.Main"
+      script:
+        - cd $TRAVIS_BUILD_DIR/akka-typed-starter && ./sbtw dockerComposeUp "runMain com.github.daggerok.akka.Main"
+        - cd $TRAVIS_BUILD_DIR/akka-typed-starter && ./sbtw "runMain com.github.daggerok.akka.Main" dockerComposeStop
     - stage: test
       name: akka-typed-starter AkkaActorTyped
       script: cd $TRAVIS_BUILD_DIR/akka-typed-starter && ./sbtw clean "runMain com.github.daggerok.akka.AkkaActorTyped"

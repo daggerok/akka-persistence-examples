@@ -8,6 +8,8 @@
 
 ## resources
 
+* [Async Akka JDBC](https://doc.akka.io/docs/akka-persistence-jdbc/3.5.2/)
+* [sbt docker-compose plugin](https://github.com/Tapad/sbt-docker-compose)
 * [Akka Typed AskPattern](https://doc.akka.io/docs/akka/2.5.3/scala/typed.html)
 * [Akka Typed Reference](https://doc.akka.io/docs/akka/current/typed/index.html)
 * [YouTube: Akka Persistence Typed](https://www.youtube.com/watch?v=xPwXI39qGOY)
