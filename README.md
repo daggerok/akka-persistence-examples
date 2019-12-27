@@ -1,4 +1,8 @@
-# akka-persistence-examples
+# akka-persistence-examples [![Build Status](https://travis-ci.org/daggerok/akka-persistence-examples.svg?branch=master)](https://travis-ci.org/daggerok/akka-persistence-examples)
+
+## other repositories
+
+* [GitHub: daggerok/akka-persistence-json-serializaer-example](https://github.com/daggerok/akka-persistence-json-serializaer-example)
 
 ## resources
 
