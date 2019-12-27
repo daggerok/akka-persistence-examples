@@ -2,7 +2,9 @@
 
 ## other repositories
 
+* [GitHub: renatocaval/akka-persistence-typed-talk](https://github.com/renatocaval/akka-persistence-typed-talk)
 * [GitHub: daggerok/akka-persistence-json-serializaer-example](https://github.com/daggerok/akka-persistence-json-serializaer-example)
+* [GitHub: rockthejvm/udemy-akka-persistence](https://github.com/rockthejvm/udemy-akka-persistence)
 
 ## resources
 
