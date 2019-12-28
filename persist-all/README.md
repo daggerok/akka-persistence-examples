@@ -2,7 +2,6 @@
 
 ```bash
 ./sbtw clean h2Mem "runMain com.github.daggerok.akka.Main"
-
 ./sbtw clean h2FileInit "runMain com.github.daggerok.akka.Main"
 ./sbtw h2FileNext "runMain com.github.daggerok.akka.Main"
 ./sbtw "runMain com.github.daggerok.akka.Main"
