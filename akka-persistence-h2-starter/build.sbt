@@ -48,6 +48,6 @@ lazy val h2: String => String => Path =
             val source = new File(s"src/main/resources/application-${profile}.conf")
             val classesDir = new File(s"target/scala-${scalaMajorVersion}/classes")
             val target = new File(classesDir, "application.conf")
-            classesDir.mkdirs() // fix FileNotFoundException...
+            classesDir.mkdirs() // fix NoSuchFileException...
             Files.copy(source.toPath, target.toPath, StandardCopyOption.REPLACE_EXISTING)
         }
