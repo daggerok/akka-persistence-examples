@@ -37,6 +37,11 @@ before_install:
 jobs:
   include:
     - stage: test
+      name: voting
+      script:
+        - cd $TRAVIS_BUILD_DIR/voting && ./sbtw clean h2FileInit "runMain com.github.daggerok.akka.Main"
+        - cd $TRAVIS_BUILD_DIR/voting && ./sbtw h2FileNext "runMain com.github.daggerok.akka.Main"
+    - stage: test
       name: graceful-shutdown
       script:
         - cd $TRAVIS_BUILD_DIR/graceful-shutdown && ./sbtw clean h2FileInit "runMain com.github.daggerok.akka.Main"
