@@ -5,50 +5,94 @@ import java.time.ZonedDateTime
 import akka.actor.{ActorLogging, ActorSystem, Props}
 import akka.persistence.PersistentActor
 
+import scala.collection.mutable
+
 object Main extends App {
+
   // protocol
   sealed trait Message
-  final case object GracefulShutdown extends Message
-  final case class BulkInvoices(invoices: Seq[Invoice]) extends Message
-  final case class Invoice(recipient: String, date: ZonedDateTime, balance: BigDecimal) extends Message
-  final case class InvoiceSaved(id: BigInt, recipient: String, date: ZonedDateTime, balance: BigDecimal) extends Message
-  // entity
-  class Accountant extends PersistentActor with ActorLogging {
-    private var id: BigInt = 1
-    private var total: BigDecimal = 0
 
-    override def persistenceId: String = "Accountant-123"
+  // commands
+  final case class RegisterCitizen(citizenId: String, date: ZonedDateTime = ZonedDateTime.now()) extends Message
+  final case class RegisterCandidate(candidateId: String, date: ZonedDateTime = ZonedDateTime.now()) extends Message
+  final case class Vote(citizenId: String, candidateId: String, date: ZonedDateTime = ZonedDateTime.now()) extends Message
+  final case class GracefulShutdown(date: ZonedDateTime = ZonedDateTime.now()) extends Message
+
+  // events
+  final case class CitizenRegistered(citizenId: String, date: ZonedDateTime = ZonedDateTime.now()) extends Message
+  final case class CandidateRegistered(candidateId: String, date: ZonedDateTime = ZonedDateTime.now()) extends Message
+  final case class Voted(citizenId: String, candidateId: String, date: ZonedDateTime = ZonedDateTime.now()) extends Message
+  final case class Rejected(reason: String) extends Message
+
+  // entity
+  class Voting extends PersistentActor with ActorLogging {
+
+    private val citizens: mutable.Set[String] = mutable.Set.empty
+    private val candidates: mutable.Set[String] = mutable.Set.empty
+    private val votes: mutable.Map[String, mutable.Set[String]] = mutable.Map.empty
+
+    override def persistenceId: String = "Voting-December-2019"
 
     override def receiveCommand: Receive = {
-      case GracefulShutdown =>
+      case cmd: GracefulShutdown =>
+        log.info("{}", cmd)
         context.stop(self)
         context.system.terminate()
-      case BulkInvoices(invoices) =>
-        val ids = 0 to invoices.size
-        val events = invoices.zip(ids).map { pair =>
-          val invoice = pair._1
-          val id = pair._2
-          InvoiceSaved(id, invoice.recipient, invoice.date, invoice.balance)
+
+      case cmd @ RegisterCitizen(citizenId, _) if citizens.contains(citizenId) =>
+        val res = Rejected(s"Citizen $citizenId already registered.")
+        log.info("{} => {}", cmd, res)
+      case cmd @ RegisterCitizen(citizenId, date) =>
+        persist(CitizenRegistered(citizenId, date)) { evt =>
+          citizens.add(citizenId)
+          log.info("cmd {} => evt {}", cmd, evt)
         }
-        persistAll(events) { invoice =>
-          id = (id + 1) % 3
-          total += invoice.balance
-          log.info("receive: {} => {}", invoice, total)
+
+      case cmd @ RegisterCandidate(candidateId, _) if candidates.contains(candidateId) =>
+        val res = Rejected(s"Candidate $candidateId already registered.")
+        log.info("{} => {}", cmd, res)
+      case cmd @ RegisterCandidate(candidateId, date) =>
+        persist(CandidateRegistered(candidateId, date)) { evt =>
+          candidates.add(candidateId)
+          votes.put(candidateId, mutable.Set.empty)
+          log.info("cmd {} => evt {}", cmd, evt)
+        }
+
+      case cmd @ Vote(citizenId, _, _) if !citizens.contains(citizenId) =>
+        val res = Rejected(s"Citizen $citizenId is not registered.")
+        log.info("{} => {}", cmd, res)
+      case cmd @ Vote(_, candidateId, _) if !candidates.contains(candidateId) =>
+        val res = Rejected(s"Candidate $candidateId is not registered.")
+        log.info("{} => {}", cmd, res)
+      case cmd @ Vote(citizenId, _, _) if votes.exists(e => e._2.contains(citizenId)) =>
+        val res = Rejected(s"Citizen $citizenId already voted.")
+        log.info("{} => {}", cmd, res)
+      case cmd @ Vote(citizenId, candidateId, date) =>
+        persist(Voted(citizenId, candidateId, date)) { evt =>
+          votes(candidateId).add(citizenId)
+          log.info("cmd {} => evt {}", cmd, evt)
         }
     }
 
     override def receiveRecover: Receive = {
-        case InvoiceSaved(id, _, _, balance) =>
-          this.id = id
-          total += balance
-          log.info("recover: InvoiceSaved(id={}, balance={}) => {}", id, balance, total)
+      case evt @ CitizenRegistered(citizenId, _) =>
+        log.info("recover {}", evt)
+        citizens.add(citizenId)
+      case evt @ CandidateRegistered(candidateId, _) =>
+        log.info("recover {}", evt)
+        candidates.add(candidateId)
+        votes.put(candidateId, mutable.Set.empty)
+      case evt @ Voted(citizenId, candidateId, date) =>
+        log.info("recover {}", evt)
+        votes(candidateId).add(citizenId)
     }
   }
   // run
   val system = ActorSystem("AkkaPersistenceSystem")
-  val accountant = system.actorOf(Props[Accountant], "accountant")
-  val invoices = for (i <- 1 to 3) yield Invoice(s"Recipient$i", ZonedDateTime.now(), BigDecimal(i * 100))
-  accountant ! BulkInvoices(invoices)
+  val voting = system.actorOf(Props[Voting], "voting")
   // stop
-  accountant ! GracefulShutdown
+  voting ! RegisterCitizen("Max")
+  voting ! RegisterCandidate("Max")
+  voting ! Vote("Max", "Max")
+  voting ! new GracefulShutdown
 }
