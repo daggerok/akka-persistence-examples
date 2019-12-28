@@ -37,6 +37,11 @@ before_install:
 jobs:
   include:
     - stage: test
+      name: graceful-shutdown
+      script:
+        - cd $TRAVIS_BUILD_DIR/graceful-shutdown && ./sbtw clean h2FileInit "runMain com.github.daggerok.akka.Main"
+        - cd $TRAVIS_BUILD_DIR/graceful-shutdown && ./sbtw h2FileNext "runMain com.github.daggerok.akka.Main"
+    - stage: test
       name: persist-all
       script:
         - cd $TRAVIS_BUILD_DIR/persist-all && ./sbtw clean h2FileInit "runMain com.github.daggerok.akka.Main"
