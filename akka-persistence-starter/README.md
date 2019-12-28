@@ -18,6 +18,6 @@
 ## all
 
 ```bash
-./sbtw dockerComposeStart "runMain com.github.daggerok.akka.Main"
+./sbtw "dockerComposeRestart skipPull" "runMain com.github.daggerok.akka.Main"
 ./sbtw "runMain com.github.daggerok.akka.Main" dockerComposeStop
 ```
