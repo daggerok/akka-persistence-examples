@@ -10,7 +10,7 @@ object Main extends App {
   sealed trait Message
   final case class SaveInvoice(recipient: String, date: Date, balance: BigDecimal) extends Message
   final case class InvoiceSaved(id: BigInt, recipient: String, date: Date, balance: BigDecimal) extends Message
-  //
+  // entity
   class Accountant extends PersistentActor with ActorLogging {
     private var id: BigInt = 1
     private var total: BigDecimal = 0
