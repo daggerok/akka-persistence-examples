@@ -1,23 +1,10 @@
 # akka-persistence-examples [![Build Status](https://travis-ci.org/daggerok/akka-persistence-examples.svg?branch=master)](https://travis-ci.org/daggerok/akka-persistence-examples)
 
-## sbt-docker-compose
-
 ```bash
-./sbtw dockerComposeUp
-./sbtw dockerComposeRestart
-./sbtw dockerComposeStop
+./sbtw clean "runMain com.github.daggerok.akka.Main"
 ```
 
-## app
+## resources
 
-```bash
-./sbtw clean package
-./sbtw "runMain com.github.daggerok.akka.Main"
-```
-
-## all
-
-```bash
-./sbtw "dockerComposeRestart skipPull" "runMain com.github.daggerok.akka.Main"
-./sbtw "runMain com.github.daggerok.akka.Main" dockerComposeStop
-```
+* https://github.com/akka/akka-persistence-jdbc/issues/116#issuecomment-324546231
+* https://github.com/lightbend/config#debugging-your-configuration

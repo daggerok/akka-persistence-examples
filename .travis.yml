@@ -37,10 +37,31 @@ before_install:
 jobs:
   include:
     - stage: test
-      name: akka-persistence-starter
+      name: akka-persistence-h2-starter stateful file
       script:
-        - cd $TRAVIS_BUILD_DIR/akka-persistence-starter && ./sbtw "dockerComposeRestart skipPull" "runMain com.github.daggerok.akka.Main"
-        - cd $TRAVIS_BUILD_DIR/akka-persistence-starter && ./sbtw "runMain com.github.daggerok.akka.Main" dockerComposeStop
+        - cd $TRAVIS_BUILD_DIR/akka-persistence-h2-starter
+        - cp -Rf ./src/main/resources/application-file-init.conf ./src/main/resources/application.conf
+        - ./sbtw clean "runMain com.github.daggerok.akka.Main"
+        - cp -Rf ./src/main/resources/application-file-next.conf ./src/main/resources/application.conf
+        - ./sbtw "runMain com.github.daggerok.akka.Main"
+    - stage: test
+      name: akka-persistence-h2-starter stateless file
+      script:
+        - cp -Rf $TRAVIS_BUILD_DIR/akka-persistence-h2-starter/src/main/resources/application-file-init.conf $TRAVIS_BUILD_DIR/akka-persistence-h2-starter/src/main/resources/application.conf
+        - cd $TRAVIS_BUILD_DIR/akka-persistence-h2-starter && ./sbtw "runMain com.github.daggerok.akka.Main"
+    - stage: test
+      name: akka-persistence-h2-starter stateless mem
+      script:
+        - cp -Rf $TRAVIS_BUILD_DIR/akka-persistence-h2-starter/src/main/resources/application-mem.conf $TRAVIS_BUILD_DIR/akka-persistence-h2-starter/src/main/resources/application.conf
+        - cd $TRAVIS_BUILD_DIR/akka-persistence-h2-starter && ./sbtw "runMain com.github.daggerok.akka.Main"
+    - stage: test
+      name: akka-persistence-starter
+      script: cd $TRAVIS_BUILD_DIR/akka-persistence-starter && ./sbtw "runMain com.github.daggerok.akka.Main"
+    - stage: test
+      name: akka-persistence-postgres-starter
+      script:
+        - cd $TRAVIS_BUILD_DIR/akka-persistence-postgres-starter && ./sbtw "dockerComposeRestart skipPull" "runMain com.github.daggerok.akka.Main"
+        - cd $TRAVIS_BUILD_DIR/akka-persistence-postgres-starter && ./sbtw "runMain com.github.daggerok.akka.Main" dockerComposeStop
     - stage: test
       name: akka-typed-starter AkkaActorTyped
       script: cd $TRAVIS_BUILD_DIR/akka-typed-starter && ./sbtw clean "runMain com.github.daggerok.akka.AkkaActorTyped"

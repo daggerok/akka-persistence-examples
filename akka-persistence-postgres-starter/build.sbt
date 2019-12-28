@@ -1,6 +1,6 @@
 val akkaVersion = "2.6.1"
 
-lazy val `akka-persistence-starter` = project
+lazy val `akka-persistence-postgres-starter` = project
   .in(file("."))
   .settings(
     organization := "com.github.daggerok.akka",
@@ -17,7 +17,7 @@ lazy val `akka-persistence-starter` = project
         "ch.qos.logback" % "logback-classic" % "1.2.3",
         // jdbc-pg
         "com.github.dnvriend" %% "akka-persistence-jdbc" % "3.5.2",
-        "com.h2database" % "h2" % "1.4.200",
+        "org.postgresql" % "postgresql" % "42.2.5",
         // test
         "com.typesafe.akka" %% "akka-actor-testkit-typed" % akkaVersion % Test,
         "org.scalatest" %% "scalatest" % "3.0.8" % Test,
@@ -31,4 +31,7 @@ lazy val `akka-persistence-starter` = project
     testOptions in Test += Tests.Argument("-oDF"),
     logBuffered in Test := false,
     licenses := Seq(("MIT", url("https://github.com/daggerok/akka-persistence-examples/blob/master/LICENSE"))),
+    composeFile := "docker-compose.yaml"
   )
+
+enablePlugins(DockerComposePlugin)
