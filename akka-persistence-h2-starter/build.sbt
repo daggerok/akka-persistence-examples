@@ -32,29 +32,22 @@ lazy val `akka-persistence-h2-starter` = project
     logBuffered in Test := false,
     licenses := Seq(("MIT", url("https://github.com/daggerok/akka-persistence-examples/blob/master/LICENSE"))),
     // h2 tasks
-    h2Mem := {
-        val suffix = "mem"
-        import java.nio.file._
-        val source = new File(s"src/main/resources/application-${suffix}.conf")
-        val target = new File(s"target/scala-${scalaBinaryVersion.value}/classes/application.conf")
-        Files.copy(source.toPath, target.toPath, StandardCopyOption.REPLACE_EXISTING)
-    },
-    h2FileInit := {
-        import java.nio.file._
-        val suffix = "file-init"
-        val source = new File(s"src/main/resources/application-${suffix}.conf")
-        val target = new File(s"target/scala-${scalaBinaryVersion.value}/classes/application.conf")
-        Files.copy(source.toPath, target.toPath, StandardCopyOption.REPLACE_EXISTING)
-    },
-    h2FileNext := {
-        import java.nio.file._
-        val suffix = "file-next"
-        val source = new File(s"src/main/resources/application-${suffix}.conf")
-        val target = new File(s"target/scala-${scalaBinaryVersion.value}/classes/application.conf")
-        Files.copy(source.toPath, target.toPath, StandardCopyOption.REPLACE_EXISTING)
-    },
+    h2Mem := h2("mem")(scalaBinaryVersion.value),
+    h2FileInit := h2("file-init")(scalaBinaryVersion.value),
+    h2FileNext := h2("file-next")(scalaBinaryVersion.value),
   )
 
 lazy val h2Mem = TaskKey[Unit]("h2Mem")
 lazy val h2FileInit = TaskKey[Unit]("h2FileInit")
 lazy val h2FileNext = TaskKey[Unit]("h2FileNext")
+
+import java.nio.file._
+lazy val h2: String => String => Path =
+    (profile: String) =>
+        (scalaMajorVersion: String) => {
+            val source = new File(s"src/main/resources/application-${profile}.conf")
+            val classesDir = new File(s"target/scala-${scalaMajorVersion}/classes")
+            val target = new File(classesDir, "application.conf")
+            classesDir.mkdirs() // fix FileNotFoundException...
+            Files.copy(source.toPath, target.toPath, StandardCopyOption.REPLACE_EXISTING)
+        }
