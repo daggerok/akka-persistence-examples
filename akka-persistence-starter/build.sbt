@@ -24,11 +24,14 @@ lazy val `akka-typed-starter` = project
     ),
     fork in run := false,
     Global / cancelable := false, // ctrl-c
-    mainClass in (Compile, run) := Some("com.github.daggerok.akka.AkkaActorTyped"),
+    mainClass in (Compile, run) := Some("com.github.daggerok.akka.Main"),
     // disable parallel tests
     parallelExecution in Test := false,
     // show full stack traces and test case durations
     testOptions in Test += Tests.Argument("-oDF"),
     logBuffered in Test := false,
     licenses := Seq(("MIT", url("https://github.com/daggerok/akka-persistence-examples/blob/master/LICENSE"))),
+    composeFile := "docker-compose.yaml"
   )
+
+enablePlugins(DockerComposePlugin)
