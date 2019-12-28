@@ -16,7 +16,7 @@ cp -Rf ./src/main/resources/application-mem.conf ./src/main/resources/applicatio
 ## file stateless
 
 ```bash
-./sbtw h2FileInit clean "runMain com.github.daggerok.akka.Main"
+./sbtw clean h2FileInit "runMain com.github.daggerok.akka.Main"
 ```
 
 _or_

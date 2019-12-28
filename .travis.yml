@@ -39,7 +39,7 @@ jobs:
     - stage: test
       name: akka-persistence-h2-starter h2FileNext
       script:
-        - cd $TRAVIS_BUILD_DIR/akka-persistence-h2-starter && ./sbtw clean compile h2FileInit "runMain com.github.daggerok.akka.Main"
+        - cd $TRAVIS_BUILD_DIR/akka-persistence-h2-starter && ./sbtw clean h2FileInit "runMain com.github.daggerok.akka.Main"
         - cd $TRAVIS_BUILD_DIR/akka-persistence-h2-starter && ./sbtw h2FileNext "runMain com.github.daggerok.akka.Main"
     - stage: test
       name: akka-persistence-h2-starter h2FileInit
