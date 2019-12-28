@@ -1,6 +1,6 @@
 val akkaVersion = "2.6.1"
 
-lazy val `akka-typed-starter` = project
+lazy val `akka-persistence-starter` = project
   .in(file("."))
   .settings(
     organization := "com.github.daggerok.akka",
