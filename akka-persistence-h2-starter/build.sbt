@@ -1,4 +1,4 @@
-val akkaVersion = "2.6.1"
+lazy val akkaVersion = "2.6.1"
 
 lazy val `akka-persistence-h2-starter` = project
   .in(file("."))
@@ -31,4 +31,30 @@ lazy val `akka-persistence-h2-starter` = project
     testOptions in Test += Tests.Argument("-oDF"),
     logBuffered in Test := false,
     licenses := Seq(("MIT", url("https://github.com/daggerok/akka-persistence-examples/blob/master/LICENSE"))),
+    // h2 tasks
+    h2Mem := {
+        val suffix = "mem"
+        import java.nio.file._
+        val source = new File(s"src/main/resources/application-${suffix}.conf")
+        val target = new File(s"target/scala-${scalaBinaryVersion.value}/classes/application.conf")
+        Files.copy(source.toPath, target.toPath, StandardCopyOption.REPLACE_EXISTING)
+    },
+    h2FileInit := {
+        import java.nio.file._
+        val suffix = "file-init"
+        val source = new File(s"src/main/resources/application-${suffix}.conf")
+        val target = new File(s"target/scala-${scalaBinaryVersion.value}/classes/application.conf")
+        Files.copy(source.toPath, target.toPath, StandardCopyOption.REPLACE_EXISTING)
+    },
+    h2FileNext := {
+        import java.nio.file._
+        val suffix = "file-next"
+        val source = new File(s"src/main/resources/application-${suffix}.conf")
+        val target = new File(s"target/scala-${scalaBinaryVersion.value}/classes/application.conf")
+        Files.copy(source.toPath, target.toPath, StandardCopyOption.REPLACE_EXISTING)
+    },
   )
+
+lazy val h2Mem = TaskKey[Unit]("h2Mem")
+lazy val h2FileInit = TaskKey[Unit]("h2FileInit")
+lazy val h2FileNext = TaskKey[Unit]("h2FileNext")
