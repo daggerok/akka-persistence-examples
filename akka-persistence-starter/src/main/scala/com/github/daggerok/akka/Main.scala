@@ -22,7 +22,7 @@ object Main extends App {
         persist(InvoiceSaved(id, recipient, date, balance)) { e =>
           id = (id + 1) % 3
           total += balance
-          log.warning("receive: {} => {}", e, total)
+          log.info("receive: {} => {}", e, total)
         }
     }
 
@@ -30,7 +30,7 @@ object Main extends App {
         case InvoiceSaved(id, _, _, balance) =>
           this.id = id
           total += balance
-          log.warning("recover: InvoiceSaved(id={}, balance={}) => {}", id, balance, total)
+          log.info("recover: InvoiceSaved(id={}, balance={}) => {}", id, balance, total)
     }
   }
   // run
