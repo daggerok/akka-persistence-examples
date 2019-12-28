@@ -46,6 +46,6 @@ object Main extends App {
   val invoices = for (i <- 1 to 3) yield Invoice(s"Recipient$i", ZonedDateTime.now(), BigDecimal(i * 100))
   accountant ! BulkInvoices(invoices)
   // stop
-  Thread.sleep(1111)
+  Thread.sleep(3333)
   system.terminate()
 }
